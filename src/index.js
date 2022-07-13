@@ -2,7 +2,7 @@ const express = require("express");
 const socket = require("socket.io");
 const app = express();
 const cors = require("cors");
-const pool = require("./db");
+const pool = require("./database/db");
 
 app.use(cors());
 app.use(express.json());
