@@ -215,6 +215,35 @@
     "email": "doctoracharo@hotmail.com"
 }
 
+// BUSCAR_MED
+{
+    "id_bus": "1001",
+    "nombre_bus": "Alonso Paz",
+    "especialidad_bus": "Cardiologia",
+    "tipo_aten": "Virtual"
+}
+
+{
+    "id_bus": "1002",
+    "nombre_bus": "Ricardo Gareca",
+    "especialidad_bus": "Geriatria",
+    "tipo_aten": "Virtual"
+}
+
+{
+    "id_bus": "1003",
+    "nombre_bus": "Andre Carrillo",
+    "especialidad_bus": "Neurologia",
+    "tipo_aten": "Presencial"
+}
+
+{
+    "id_bus": "1004",
+    "nombre_bus": "Jose Caballero",
+    "especialidad_bus": "Medicina General",
+    "tipo_aten": "Presencial"
+}
+
 -----------------QUERYS CASO NEGOCIO-----------------
 SELECCIONAR CITAS POR MEDICO
 

@@ -251,6 +251,42 @@ app.get("/pacientes/:id_pac", async (req, res) => {
   }
 });
 
+//-----------------QUERYS CASO BUSCAR MEDICO--------
+//CREAR 
+app.post("/bus_med", async (req, res) => {
+  try {
+    const { id_bus, nombre_bus, especialidad_bus, tipo_aten } = req.body;
+    const newBusmedico = await pool.query("INSERT INTO medicos (id_bus, nombre_bus, especialidad_bus, tipo_aten) VALUES($1, $2, $3, $4) RETURNING *", [id_bus, nombre_bus, especialidad_bus, tipo_aten]);
+    res.json(newBusmedico.rows[0]);
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+//SELECCIONAR TODOS LOS MEDICOS PARA BUSCAR
+app.get("/bus_med", async (req, res) => {
+  try {
+    const allBusMedico = await pool.query("SELECT * FROM bus_med");
+    res.json(allBusMedico.rows);
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+//SELECCIONAR BUS_MED POR ID_MED
+app.get("/bus_med/:id_bus", async (req, res) => {
+  try {
+    const { id_bus } = req.params;
+    const bus_med = await pool.query("SELECT * FROM buscar_med WHERE id_bus = $1", [id_bus]);
+    res.json(bus_med.rows[0]);
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
 //-----------------QUERYS CASO NEGOCIO-----------------
 //SELECCIONAR CITAS POR MEDICO
 app.get("/citasPorMedico/:id_med", async (req, res) => {
