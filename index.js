@@ -12,8 +12,8 @@ app.use(express.json());
 //CREAR CITA
 app.post("/citas", async (req, res) => {
   try {
-    const { id_cit, id_med, id_pac, fecha, hora, diagnostico } = req.body;
-    const newCita = await pool.query("INSERT INTO citas (id_cit, id_med, id_pac, fecha, hora, diagnostico) VALUES($1, $2, $3, $4, $5, $6) RETURNING *", [id_cit, id_med, id_pac, fecha, hora, diagnostico]);
+    const { id_cit, id_med, id_pac, modalidad, fecha, hora, diagnostico } = req.body;
+    const newCita = await pool.query("INSERT INTO citas (id_cit, id_med, id_pac, modalidad, fecha, hora, diagnostico) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *", [id_cit, id_med, id_pac, modalidad, fecha, hora, diagnostico]);
     res.json(newCita.rows[0]);
 
   } catch (error) {
@@ -256,7 +256,7 @@ app.get("/pacientes/:id_pac", async (req, res) => {
 app.get("/citasPorMedico/:id_med", async (req, res) => {
   try {
     const { id_med } = req.params;
-    const citasPorMedico = await pool.query("SELECT CITAS.ID_CIT, PACIENTES.NOMBRE, PACIENTES.APELLIDO, PACIENTES.EMAIL, PACIENTES.EDAD, PACIENTES.GENERO, MEDICOS.ESPECIALIDAD, CITAS.FECHA, CITAS.HORA FROM CITAS JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED AND MEDICOS.ID_MED = $1", [id_med]);
+    const citasPorMedico = await pool.query("SELECT CITAS.ID_CIT, PACIENTES.NOMBRE, PACIENTES.APELLIDO, PACIENTES.EMAIL, PACIENTES.EDAD, PACIENTES.GENERO, MEDICOS.ESPECIALIDAD, CITAS.MODALIDAD, CITAS.FECHA, CITAS.HORA FROM CITAS JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED AND MEDICOS.ID_MED = $1", [id_med]);
     res.json(citasPorMedico.rows);
 
   } catch (error) {
@@ -268,7 +268,7 @@ app.get("/citasPorMedico/:id_med", async (req, res) => {
 app.get("/citasPorMedicoYCercania/:id_med", async (req, res) => {
   try {
     const { id_med } = req.params;
-    const citasPorMedicoYCercania = await pool.query("SELECT CITAS.ID_CIT, PACIENTES.NOMBRE, PACIENTES.APELLIDO, PACIENTES.EMAIL, PACIENTES.EDAD, PACIENTES.GENERO, MEDICOS.ESPECIALIDAD, CITAS.FECHA, CITAS.HORA FROM CITAS JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED AND MEDICOS.ID_MED = $1 ORDER BY CITAS.FECHA ASC, CITAS.HORA ASC", [id_med]);
+    const citasPorMedicoYCercania = await pool.query("SELECT CITAS.ID_CIT, PACIENTES.NOMBRE, PACIENTES.APELLIDO, PACIENTES.EMAIL, PACIENTES.EDAD, PACIENTES.GENERO, MEDICOS.ESPECIALIDAD, CITAS.MODALIDAD, CITAS.FECHA, CITAS.HORA FROM CITAS JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED AND MEDICOS.ID_MED = $1 ORDER BY CITAS.FECHA ASC, CITAS.HORA ASC", [id_med]);
     res.json(citasPorMedicoYCercania.rows);
 
   } catch (error) {
@@ -280,7 +280,7 @@ app.get("/citasPorMedicoYCercania/:id_med", async (req, res) => {
 app.get("/citasPorMedicoYLejania/:id_med", async (req, res) => {
   try {
     const { id_med } = req.params;
-    const citasPorMedicoYLejania = await pool.query("SELECT CITAS.ID_CIT, PACIENTES.NOMBRE, PACIENTES.APELLIDO, PACIENTES.EMAIL, PACIENTES.EDAD, PACIENTES.GENERO, MEDICOS.ESPECIALIDAD, CITAS.FECHA, CITAS.HORA FROM CITAS JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED AND MEDICOS.ID_MED = $1 ORDER BY CITAS.FECHA DESC, CITAS.HORA DESC", [id_med]);
+    const citasPorMedicoYLejania = await pool.query("SELECT CITAS.ID_CIT, PACIENTES.NOMBRE, PACIENTES.APELLIDO, PACIENTES.EMAIL, PACIENTES.EDAD, PACIENTES.GENERO, MEDICOS.ESPECIALIDAD, CITAS.MODALIDAD, CITAS.FECHA, CITAS.HORA FROM CITAS JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED AND MEDICOS.ID_MED = $1 ORDER BY CITAS.FECHA DESC, CITAS.HORA DESC", [id_med]);
     res.json(citasPorMedicoYLejania.rows);
 
   } catch (error) {
@@ -292,7 +292,7 @@ app.get("/citasPorMedicoYLejania/:id_med", async (req, res) => {
 app.get("/citasPorPaciente/:id_pac", async (req, res) => {
   try {
     const { id_pac } = req.params;
-    const citasPorPaciente = await pool.query("SELECT CITAS.ID_CIT, MEDICOS.NOMBRE, MEDICOS.APELLIDO, MEDICOS.ESPECIALIDAD, CITAS.FECHA, CITAS.DIAGNOSTICO FROM CITAS JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC AND PACIENTES.ID_PAC = $1", [id_pac]);
+    const citasPorPaciente = await pool.query("SELECT CITAS.ID_CIT, MEDICOS.NOMBRE, MEDICOS.APELLIDO, MEDICOS.ESPECIALIDAD, CITAS.MODALIDAD, CITAS.FECHA, CITAS.DIAGNOSTICO FROM CITAS JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC AND PACIENTES.ID_PAC = $1", [id_pac]);
     res.json(citasPorPaciente.rows);
 
   } catch (error) {
