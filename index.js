@@ -292,7 +292,7 @@ app.get("/citasPorMedicoYLejania/:id_med", async (req, res) => {
 app.get("/citasPorPaciente/:id_pac", async (req, res) => {
   try {
     const { id_pac } = req.params;
-    const citasPorPaciente = await pool.query("SELECT CITAS.ID_CIT, MEDICOS.NOMBRE, MEDICOS.APELLIDO, MEDICOS.ESPECIALIDAD, CITAS.FECHA, CITAS.DIAGNOSTICO FROM CITAS JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC AND PACIENTES.ID_PAC = $1", [id_pac]);
+    const citasPorPaciente = await pool.query("SELECT CITAS.ID_CIT, CITAS.FECHA, CITAS.HORA, MEDICOS.NOMBRE, MEDICOS.APELLIDO, MEDICOS.ESPECIALIDAD FROM CITAS JOIN MEDICOS ON CITAS.ID_MED = MEDICOS.ID_MED JOIN PACIENTES ON CITAS.ID_PAC = PACIENTES.ID_PAC AND PACIENTES.ID_PAC = $1", [id_pac]);
     res.json(citasPorPaciente.rows);
 
   } catch (error) {
@@ -366,4 +366,69 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("USER DISCONNECTED");
   });
+});
+
+
+//------------------QUERYS MAURICIO-----------------
+//CREAR CITA PACIENTE
+app.post("/citasPorPaciente", async (req, res) => {
+  try {
+    const random = String(Math.floor(1000 + Math.random() * 9000));
+    const { id_med, id_pac, fecha, hora, diagnostico } = req.body;
+    const newCita = await pool.query("INSERT INTO citas (ID_CITAS, ID_MED, ID_PAC, FECHA, HORA, DIAGNOSTICO) VALUES($1, $2, $3, $4, $5, $6) RETURNING *", [random, id_med, id_pac, fecha, hora, diagnostico, modalidad]);
+    res.json(newCita.rows[0]);
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+//SELECCIONAR TODAS LAS CITAS PACIENTE
+app.get("/mis_citas/:id_pac", async (req, res) => {
+  try {
+    const { id_pac } = req.params;
+    const cita = await pool.query("SELECT * FROM citas WHERE id_pac = $1", [id_pac]);
+    res.json(cita.rows[0]);
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+//SELECCIONAR DATOS DEL PACIENTE
+app.get("/mis_datosPAC/:id_pac", async (req, res) => {
+  try {
+    const { id_pac } = req.params;
+    const cita = await pool.query("SELECT NOMBRE, APELLIDO, NACIMIENTO, EDAD, GENERO, GRUPO_SANGUINEO, DIRECCION, TELEFONO, EMAIL FROM  WHERE ID_PAC = $1", [id_pac]);
+    res.json(cita.rows[0]);
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+//ACTUALIZAR DATOS DEL PACIENTE
+app.put("/mis_datosPAC_UPDT/:id_pac", async (req, res) => {
+  try {
+    const { id_pac } = req.params;
+    const { nombre, apellido, nacimiento, edad, genero, grupo_sanguineo, direccion, telefono, email  } = req.body;
+    const udpdateDatos = await pool.query("UPDATE pacientes SET NOMBRE = $2, APELLIDO = $3, NACIMIENTO = $4, EDAD = $5, GENERO = $6, GRUPO_SANGUINEO = $7, DIRECCION = $8, TELEFONO = $9, EMAIL = $10 WHERE ID_CIT = $1", [id_cit, nombre, apellido, nacimiento, edad, genero, grupo_sanguineo, direccion, telefono, email]);
+    res.json("Datos actualizados");
+
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+//ACTUALIZAR DATOS DEL MEDICO
+app.put("/mis_datos_MED_UPDT/:id_med", async (req, res) => {
+  try {
+    const { id_med } = req.params;
+    const { nombre, apellido, nacimiento, edad, genero, grupo_sanguineo, direccion, telefono, email  } = req.body;
+    const udpdateDatos = await pool.query("UPDATE pacientes SET NOMBRE = $2, APELLIDO = $3, NACIMIENTO = $4, EDAD = $5, GENERO = $6, GRUPO_SANGUINEO = $7, DIRECCION = $8, TELEFONO = $9, EMAIL = $10 WHERE ID_MED = $1", [id_med, nombre, apellido, nacimiento, edad, genero, grupo_sanguineo, direccion, telefono, email]);
+    res.json("Datos actualizados");
+
+  } catch (error) {
+    console.error(error.message);
+  }
 });
